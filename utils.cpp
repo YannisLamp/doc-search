@@ -25,7 +25,7 @@ int get_line_id(char* line) {
     return id;
 }
 
-int get_start_pos(char* line) {
+char* get_pure_doc(char* line) {
     int pos = 0;
     // Id chars
     while (!isspace(line[pos]))
@@ -33,5 +33,6 @@ int get_start_pos(char* line) {
     // Whitespace after id
     while (isspace(line[pos]))
         pos++;
-    return pos;
+        
+    return &line[pos];
 }
