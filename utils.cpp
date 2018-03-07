@@ -4,8 +4,8 @@
 // Explain wanted arguments for program execution
 void explain_args(char* prog_name) {
     cerr << "Usage: " << prog_name
-        << "\n -i Average number of successive process arrivals,"
-        << "\n -k Average process lifespan" << endl;
+        << "\n -i Average number of successive process arrivals, (mandatory)"
+        << "\n -k Average process lifespan (proeretiko)" << endl;
 }
 
 
@@ -25,14 +25,21 @@ int get_line_id(char* line) {
     return id;
 }
 
-char* get_pure_doc(char* line) {
+char* get_pure_doc(char* doc) {
     int pos = 0;
     // Id chars
-    while (!isspace(line[pos]))
+    while (!isspace(doc[pos]))
         pos++;
     // Whitespace after id
-    while (isspace(line[pos]))
+    while (isspace(doc[pos]))
         pos++;
-        
-    return &line[pos];
+    return &doc[pos];
 }
+
+void alloc_chk(void* alloc_ptr, char* msg) {
+    if (alloc_ptr == NULL) {
+        cerr << "Memory allocation for " << msg << " failed" << endl;
+        exit(-1);
+    }
+}
+

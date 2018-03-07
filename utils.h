@@ -3,9 +3,9 @@
 
 void explain_args(char* pname);
 
-int get_line_id(char* line);
+int get_line_id(char* doc);
 
-char* get_pure_doc(char* line);
+int get_pure_pos(char* doc);
 
 
 
