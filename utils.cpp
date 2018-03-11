@@ -10,15 +10,21 @@ void explain_args(char* prog_name) {
 
 
 // Returns -1 in case of error
-int get_line_id(char* line) {
+int get_line_id(char* doc) {
     int pos = 0;
-    int id = atoi(line[pos]);
+    // Ignore whitespace at the start of the document
+    while (isspace(doc[pos]))
+        pos++;
+    
+    // Get each digit of the id 
+    int id = atoi(doc[pos]);
     pos++;
-    while (!isspace(line[pos])) {
-        if (line[pos] >= '0' && line[pos] <= '9') {
-            id = id*10 + atoi(line[pos]);
+    while (!isspace(doc[pos])) {
+        if (doc[pos] >= '0' && doc[pos] <= '9') {
+            id = id*10 + atoi(doc[pos]);
             pos++;
         }
+        // Error, not a number, return -1
         else 
             return -1;
     }

@@ -9,16 +9,19 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-    
-    // Check program arguments and assign them to proper variables
+    /** 
+    * Check program arguments and assign them to proper variables
+    */
+
     char* docfile = NULL;
     int K = 10;
-    // For this particular program
-    for (int argp = 1; argp < argc; argp = argp + 2) {
-        if (strcmp(argv[argp], "-i"))
-            docfile = argv[argp + 1];
-        else if (strcmp(argv[argp], "-k"))
-            K = atoi(argv[argp + 1]);
+    // For this particular program, after each flag another argument is expected
+    // User can give any number of "-i" and "-k" flags, but only the last ones are saved
+    for (int argi = 1; argi < argc; argi = argi+2) {
+        if (strcmp(argv[argi], "-i"))
+            docfile = argv[argi + 1];
+        else if (strcmp(argv[argi], "-k"))
+            K = atoi(argv[argi + 1]);
         // Else explain wanted arguments for program execution and terminate
         else {
             cerr << "Usage: " << prog_name
@@ -29,13 +32,10 @@ int main(int argc, char* argv[]) {
         }
     }
     // Check if a value is assigned to docfile (name of the input file)
-    // If it is, terminate
     if (docfile === NULL) {
         
     } 
 
-
-    
 
     /** 
     * Parse docfile
@@ -59,21 +59,10 @@ int main(int argc, char* argv[]) {
     alloc_chk(map, "map");
     
     // Initialize Trie
-    
-
-    // Get first line
-    read = getline(&line, &len, docfile_ptr);
-    if (read == -1) {
-        cerr << "Input file is empty" << endl;
-        exit(-1);
-    }
-    else {
-        
-    }
 
 
     // For each line of the input file
-    curr_doc = 1;
+    curr_doc = 0;
     while ((read = getline(&line, &len, docfile_ptr)) != -1) {
         printf("Retrieved line of length %zu :\n", read);
         printf("%s", line);
@@ -89,14 +78,21 @@ int main(int argc, char* argv[]) {
         if (doc_id == map_size - 1) {
             map_size = map_size*2;
             realloc(map, map_size*sizeof(char*));
-            alloc_chk(map, "map");    
+            alloc_chk(map, "map");
         }
 
+        char* 
         char* pure_doc = get_pure_doc(line);
         // Insert each word of the document into Trie
 
         curr_doc++;
     }
+    // Check if the input file is empty (program did not enter the while loop)
+    if (curr_doc == 0) {
+        cerr << "Input file is empty" << endl;
+        exit(-1);
+    }
+
 
     // Free line buffer
     free(line);
