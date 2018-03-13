@@ -10,7 +10,7 @@ void explain_args(char* prog_name) {
 
 
 // Returns -1 in case of error
-int get_line_id(char* doc) {
+int get_doc_id(char* doc) {
     int pos = 0;
     // Ignore whitespace at the start of the document
     while (isspace(doc[pos]))
