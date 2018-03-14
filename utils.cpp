@@ -4,8 +4,8 @@
 // Explain wanted arguments for program execution
 void explain_args(char* prog_name) {
     cerr << "Usage: " << prog_name
-        << "\n -i Average number of successive process arrivals, (mandatory)"
-        << "\n -k Average process lifespan (proeretiko)" << endl;
+        << "\n -i, followed by the name of the input file (mandatory)"
+        << "\n -k, followed by the maximum number of results for each query (optional, default value is 10)" << endl;
 }
 
 
@@ -31,6 +31,7 @@ int get_doc_id(char* doc) {
     return id;
 }
 
+
 char* get_pure_doc(char* doc) {
     int pos = 0;
     // Id chars
@@ -42,10 +43,10 @@ char* get_pure_doc(char* doc) {
     return &doc[pos];
 }
 
+
 void alloc_chk(void* alloc_ptr, char* msg) {
     if (alloc_ptr == NULL) {
         cerr << "Memory allocation for " << msg << " failed" << endl;
         exit(-1);
     }
 }
-

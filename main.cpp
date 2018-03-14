@@ -24,14 +24,15 @@ int main(int argc, char* argv[]) {
             K = atoi(argv[argi + 1]);
         // Else explain wanted arguments for program execution and terminate
         else {
-            
+            explain_args(argv[0]);
             exit(-1);
         }
     }
     // Check if a value is assigned to docfile (name of the input file)
     if (docfile == NULL) {
-        
-    } 
+        explain_args(argv[0]);
+        exit(-1);
+    }
 
 
     /** 
@@ -53,7 +54,7 @@ int main(int argc, char* argv[]) {
     alloc_chk(map, "map");
     
     // Initialize Trie
-
+    
 
     // Getline vars
     char* line = NULL;
