@@ -5,13 +5,10 @@
 using namespace std;
 
 TrieNode::TrieNode(char input_letter) : letter(input_letter), posting_list_ptr(NULL), 
-										right_ptr(NULL), down_ptr(NULL) {
-	cout << "Creating TrieNode" << endl;
-}
+										right_ptr(NULL), down_ptr(NULL) { }
 
 
 TrieNode::~TrieNode() {
-	cout << "Deleting TrieNode" << endl;
 	delete posting_list_ptr;
 	delete right_ptr;
 	delete down_ptr;

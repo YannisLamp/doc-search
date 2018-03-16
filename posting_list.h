@@ -1,21 +1,23 @@
 #ifndef POSTINGLIST
 #define POSTINGLIST
 
-#include "posting_list_node.h"
+#include "posting.h"
 
 class PostingList {
 private:
+    char* word;
     int node_num;
 
-    PostingListNode* first_node_ptr;
-    PostingListNode* last_node_ptr;
+    Posting* first_node_ptr;
+    Posting* last_node_ptr;
 public:
-    PostingList(int doc_id);
+    PostingList(char* input_word, int doc_id);
 	~PostingList();
 
     void insert_doc_id(int doc_id);
 
     int get_node_num();
+    char* get_word();
 };
 
 

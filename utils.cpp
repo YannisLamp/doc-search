@@ -1,11 +1,16 @@
 #include <iostream>
 #include <cctype>
+#include <cstdlib>
+#include <cstring>
+
+using namespace std;
 
 // Explain wanted arguments for program execution
 void explain_args(char* prog_name) {
     cerr << "Usage: " << prog_name
         << "\n -i, followed by the name of the input file (mandatory)"
-        << "\n -k, followed by the maximum number of results for each query (optional, default value is 10)" << endl;
+        << "\n -k, followed by the maximum number of results for each query "
+                "(optional, default value is 10, must be greater than 0)" << endl;
 }
 
 
@@ -17,11 +22,11 @@ int get_doc_id(char* doc) {
         pos++;
     
     // Get each digit of the id 
-    int id = atoi(doc[pos]);
+    int id = atoi((&doc[pos]));
     pos++;
     while (!isspace(doc[pos])) {
         if (doc[pos] >= '0' && doc[pos] <= '9') {
-            id = id*10 + atoi(doc[pos]);
+            id = id*10 + atoi(&doc[pos]);
             pos++;
         }
         // Error, not a number, return -1

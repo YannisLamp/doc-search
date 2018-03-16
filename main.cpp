@@ -18,9 +18,9 @@ int main(int argc, char* argv[]) {
     // For this particular program, after each flag another argument is expected
     // User can give any number of "-i" and "-k" flags, but only the last ones are saved
     for (int argi = 1; argi < argc; argi = argi+2) {
-        if (strcmp(argv[argi], "-i"))
+        if (strcmp(argv[argi], "-i") == 0)
             docfile = argv[argi + 1];
-        else if (strcmp(argv[argi], "-k"))
+        else if (strcmp(argv[argi], "-k") == 0)
             K = atoi(argv[argi + 1]);
         // Else explain wanted arguments for program execution and terminate
         else {
@@ -29,7 +29,8 @@ int main(int argc, char* argv[]) {
         }
     }
     // Check if a value is assigned to docfile (name of the input file)
-    if (docfile == NULL) {
+    // and if K's value is greater than 0
+    if (docfile == NULL || K <= 0) {
         explain_args(argv[0]);
         exit(-1);
     }
@@ -49,11 +50,11 @@ int main(int argc, char* argv[]) {
 
     // Input document map
     int map_size = 32;
-    char** map = malloc(map_size*sizeof(char*));
+    char** map = (char**)malloc(map_size*sizeof(char*));
     alloc_chk(map, "map");
     
     // Initialize Trie
-    
+    Trie trie;
 
     // Getline vars
     char* line = NULL;
@@ -82,10 +83,10 @@ int main(int argc, char* argv[]) {
         }
 
         // Copy document to map
-        char* pure_doc = get_pure_doc(line);
-        map[doc_id] = malloc(sizeof(pure_doc));
-        alloc_chk(map, "map");
-        strcpy(map[doc_id], pure_doc);
+        //char* pure_doc = get_pure_doc(line);
+        //map[doc_id] = (char*)malloc(sizeof(pure_doc));
+        //alloc_chk(map, "map");
+        //strcpy(map[doc_id], pure_doc);
 
         // Insert each word of the document into Trie
 
@@ -99,9 +100,7 @@ int main(int argc, char* argv[]) {
     }
 
 
-    // Free line buffer
-    free(line);
-    line = NULL;
+
 
     
     /** 
@@ -115,6 +114,43 @@ int main(int argc, char* argv[]) {
 
 
     // Free input document map
-    for (int i = 0; i < ; i++)
-        free()
+    //for (int i = 0; i < ; i++)
+        //free()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Free line buffer
+    free(line);
+    line = NULL;
+
 }
+
+
+
+
