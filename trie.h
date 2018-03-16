@@ -7,16 +7,12 @@ class Trie {
 private:
     TrieNode* first_p;
 
-    void rec_trav_down(char* word, TrieNode* trie_node_p);
-    void rec_horiz_sort(char* word, TrieNode* trie_node_p);
+    void rec_insert(char* word, TrieNode* curr_node_p, int doc_id);
 public:
     Trie();
 	~Trie();
 
-    void insert(char* word);
-
-
-
+    void insert(char* word, int doc_id);
 };
 
 

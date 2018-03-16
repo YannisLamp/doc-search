@@ -1,23 +1,41 @@
 #include <iostream>
 #include "posting_list_node.h"
 
-void set_num(int input) {
+using namespace std;
 
+
+PostingListNode::PostingListNode(int doc_id) : id(doc_id), count(1),
+                                                    next_ptr(NULL) {
+	cout << "Creating PostingListNode" << endl;
 }
 
 
-void set_next_ptr(int ptr) {
-
+PostingListNode::~PostingListNode() {
+	cout << "Deleting PostingListNode" << endl;
+	delete next_ptr;
 }
 
-int get_id() {
 
+void PostingListNode::incr_count() {
+    count++;
 }
-    
-int get_num() {
 
+
+void PostingListNode::set_next_ptr(PostingListNode* input_ptr) {
+    next_ptr = input_ptr;
 }
-    
-int get_next_ptr() {
-    
+
+
+int PostingListNode::get_id() {
+    return id;
+}
+
+
+int PostingListNode::get_count() {
+    return count;
+}
+
+
+PostingListNode* PostingListNode::get_next_ptr() {
+    return next_ptr;
 }

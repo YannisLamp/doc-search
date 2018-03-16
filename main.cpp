@@ -47,7 +47,6 @@ int main(int argc, char* argv[]) {
         exit(-1); 
     }
 
-    
     // Input document map
     int map_size = 32;
     char** map = malloc(map_size*sizeof(char*));

@@ -4,25 +4,19 @@
 class PostingListNode {
 private:
     int id;
-    int num;
+    int count;
 
     PostingListNode* next_ptr;
 public:
-    
-    
-    void set_num(int input);
-    void set_next_ptr(int ptr);
+    PostingListNode(int doc_id);
+    ~PostingListNode();
+
+    void incr_count();
+    void set_next_ptr(PostingListNode* input_ptr);
 
     int get_id();
-    int get_num();
-    int get_next_ptr();
-
+    int get_count();
+    PostingListNode* get_next_ptr();
 };
-
-
-
-
-
-
 
 #endif
