@@ -8,7 +8,8 @@ private:
     TrieNode* first_ptr;
 
     void rec_insert(char* word, TrieNode* curr_node_ptr, int doc_id);
-    void rec_print_doc_freq(TrieNode* curr_node_ptr, char* curr_word);
+    void rec_print_doc_freq(TrieNode* curr_node_ptr, char* word,
+                            int* size, int curr_len);
 public:
     Trie();
 	~Trie();

@@ -18,7 +18,7 @@ void explain_args(char* prog_name) {
 int get_doc_id(char* str_id) {
     int pos = 0;
     // Get each digit of the id 
-    int id = atoi((&str_id[pos]));
+    int id = atoi(&str_id[pos]);
     pos++;
     while (!isspace(str_id[pos])) {
         if (str_id[pos] >= '0' && str_id[pos] <= '9') {

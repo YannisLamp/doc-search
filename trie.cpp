@@ -1,8 +1,10 @@
 #include <iostream>
 #include <cstring>
+#include <cstdlib>
 #include "trie.h"
 
 #include "trie_node.h"
+#include "utils.h"
 
 using namespace std;
 
@@ -81,22 +83,32 @@ void Trie::insert(char* word, int doc_id) {
 }
 
 void Trie::print_doc_freq() {
-    //char empty_str[] = "";
-    rec_print_doc_freq(first_ptr, "");
+    int size = 8;
+    char* word = (char*) malloc(size*sizeof(char));
+    rec_print_doc_freq(first_ptr, word, &size, 0);
+    free(word);
 }
 
-void Trie::rec_print_doc_freq(TrieNode* curr_node_ptr, char* curr_word) {
-    char word[sizeof(curr_word) + 1];
-    strcpy(word, curr_word);
-    word[strlen(curr_word)] = curr_node_ptr->get_letter();
-    word[strlen(curr_word) + 1] = curr_node_ptr->get_letter();
+void Trie::rec_print_doc_freq(TrieNode* curr_node_ptr, char* word,
+                              int* size, int curr_len) {
+    if ((curr_len + 2) > *size) {
+        *size = *size * 2;
+        word = (char*)realloc(word, *size);
+        alloc_chk(word, "word");
+    }
+
+    curr_len++;
+    word[curr_len - 1] = curr_node_ptr->get_letter();
+    word[curr_len] = '\0';
 
     if (curr_node_ptr->get_posting_list_ptr() != NULL)
-        cout << word << " " << curr_node_ptr->get_posting_list_ptr()->get_node_num();
+        cout << word << " " << curr_node_ptr->get_posting_list_ptr()->get_node_num() << endl;
 
     if (curr_node_ptr->get_down_ptr() != NULL)
-        rec_print_doc_freq(curr_node_ptr->get_down_ptr(), word);
+        rec_print_doc_freq(curr_node_ptr->get_down_ptr(), word, size, curr_len);
 
+    word[curr_len - 1] = '\0';
+    curr_len--;
     if (curr_node_ptr->get_right_ptr() != NULL)
-        rec_print_doc_freq(curr_node_ptr->get_right_ptr(), word);
+        rec_print_doc_freq(curr_node_ptr->get_right_ptr(), word, size, curr_len);
 }

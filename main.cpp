@@ -81,19 +81,20 @@ int main(int argc, char* argv[]) {
         if (line[doc_index] != '\0') {
 
             // Check if input documents are properly numbered
-            int input_id = get_doc_id(line);
+            int input_id = atoi(line);
             if (input_id != doc_id) {
                 cerr << "Input documents are not properly numbered" << endl;
                 return 1;
             }
+            cout << doc_id << endl;
 
             // If map is full, realloc
             if (input_id == map_size - 1) {
                 map_size = map_size * 2;
-                realloc(map, map_size * sizeof(char *));
+                map = (char**)realloc(map, map_size * sizeof(char *));
                 alloc_chk(map, map_str);
 
-                realloc(word_num, map_size * sizeof(int));
+                word_num = (int*)realloc(word_num, map_size * sizeof(int));
                 alloc_chk(word_num, word_num_str);
             }
 
@@ -113,7 +114,7 @@ int main(int argc, char* argv[]) {
 
             // Insert each word of the document into Trie
             for (int i = 0; i < word_num[doc_id]; i++) {
-                trie.insert(&line[doc_index], doc_id);\
+                trie.insert(&line[doc_index], doc_id);
                 doc_index = get_next_word_index(line , doc_index);
             }
         }
@@ -130,21 +131,21 @@ int main(int argc, char* argv[]) {
     /** 
     * 
     */
-
-    //bool exit_prog = false;
-    //while (exit_prog == false) {
-        //read = getline(&line, &len, stdin);
+/*
+    bool exit_prog = false;
+    while (exit_prog == false) {
+        read = getline(&line, &len, stdin);
         // Check for errors in getline
-        //if (read == -1) {
+        if (read == -1) {
 
-        //}
-
-
+        }
 
 
-//    }
 
 
+    }
+
+*/
 
 
 
