@@ -1,5 +1,7 @@
 #include <iostream>
+#include <cstring>
 #include "trie.h"
+
 #include "trie_node.h"
 
 using namespace std;
@@ -76,4 +78,25 @@ void Trie::insert(char* word, int doc_id) {
 	else {
 		rec_insert(word, first_ptr, doc_id);
 	}
+}
+
+void Trie::print_doc_freq() {
+    //char empty_str[] = "";
+    rec_print_doc_freq(first_ptr, "");
+}
+
+void Trie::rec_print_doc_freq(TrieNode* curr_node_ptr, char* curr_word) {
+    char word[sizeof(curr_word) + 1];
+    strcpy(word, curr_word);
+    word[strlen(curr_word)] = curr_node_ptr->get_letter();
+    word[strlen(curr_word) + 1] = curr_node_ptr->get_letter();
+
+    if (curr_node_ptr->get_posting_list_ptr() != NULL)
+        cout << word << " " << curr_node_ptr->get_posting_list_ptr()->get_node_num();
+
+    if (curr_node_ptr->get_down_ptr() != NULL)
+        rec_print_doc_freq(curr_node_ptr->get_down_ptr(), word);
+
+    if (curr_node_ptr->get_right_ptr() != NULL)
+        rec_print_doc_freq(curr_node_ptr->get_right_ptr(), word);
 }

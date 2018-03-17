@@ -9,7 +9,7 @@ private:
 
 public:
     // Oveload < operator
-    bool operator < (DocRelScore const &left, DocRelScore const &right);
+    //bool operator < (DocRelScore const &left, DocRelScore const &right);
 };
 
 

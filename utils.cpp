@@ -17,7 +17,6 @@ void explain_args(char* prog_name) {
 // Returns -1 in case of error, stops at first whitespace instead of '\0' (atoi)
 int get_doc_id(char* str_id) {
     int pos = 0;
-    
     // Get each digit of the id 
     int id = atoi((&str_id[pos]));
     pos++;
@@ -34,7 +33,6 @@ int get_doc_id(char* str_id) {
 }
 
 
-// Including id
 int get_word_num(char* doc) {
     int word_num = 0;
     int i = 0;
@@ -57,13 +55,12 @@ int get_word_num(char* doc) {
 }
 
 
-// Including id
 int get_next_word_index(char* doc, int index) {
     // Pass current word
     while (!isspace(doc[index]))
         index++;
     // Then pass any whitespace after it
-    while (isspace(doc[index]) && doc[index] != '\n')
+    while (isspace(doc[index]) && doc[index] != '\0')
         index++;
 
     return index;

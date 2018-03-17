@@ -74,11 +74,11 @@ int main(int argc, char* argv[]) {
         doc_id++;
         int doc_index = 0;
 
-        // Consume whitespace at the start of the document
-        while (isspace(line[doc_index]) && line[doc_index] != '\n')
+        // Pass whitespace at the start of the document
+        while (isspace(line[doc_index]) && line[doc_index] != '\0')
             doc_index++;
-        // If next char is not a line change (document is not empty)
-        if (line[doc_index] != '\n') {
+        // If next char is not '\0' (document is not empty)
+        if (line[doc_index] != '\0') {
 
             // Check if input documents are properly numbered
             int input_id = get_doc_id(line);
@@ -101,25 +101,21 @@ int main(int argc, char* argv[]) {
             word_num[doc_id] = get_word_num(line) - 1;
             doc_index = get_next_word_index(line , doc_index);
             // Count document size
-            int doc_size = 0;
-            while (line[doc_index + doc_size] != '\0')
-                doc_size++;
-            doc_size++;
+            int doc_len = strlen(&line[doc_index]);
             // Allocate space for document (plus '\0')
-            if (line[doc_index + doc_size - 1] == '\n')
-                line[doc_index + doc_size - 1] = ' ';
-            map[doc_id] = (char *) malloc((doc_size+1) * sizeof(char));
+            if (line[doc_index + doc_len] == '\n')
+                line[doc_index + doc_len] = ' ';
+
+            map[doc_id] = (char *) malloc((doc_len+1) * sizeof(char));
             alloc_chk(map, map_str);
             // Save document in map
-            strncpy(map[doc_id], &line[doc_index], doc_size);
-            map[doc_id][doc_size] = '\0';
+            strcpy(map[doc_id], &line[doc_index]);
 
             // Insert each word of the document into Trie
             for (int i = 0; i < word_num[doc_id]; i++) {
                 trie.insert(&line[doc_index], doc_id);\
                 doc_index = get_next_word_index(line , doc_index);
             }
-            int a =0;
         }
     }
     // Check if the input file is empty (program did not enter the while loop)
@@ -129,24 +125,24 @@ int main(int argc, char* argv[]) {
     }
 
 
-    //trie.print_doc_freq();
+    trie.print_doc_freq();
 
     /** 
     * 
     */
 
-    bool exit_prog = false;
-    while (exit_prog == false) {
-        read = getline(&line, &len, stdin);
+    //bool exit_prog = false;
+    //while (exit_prog == false) {
+        //read = getline(&line, &len, stdin);
         // Check for errors in getline
-        if (read == -1) {
+        //if (read == -1) {
 
-        }
-
-
+        //}
 
 
-    }
+
+
+//    }
 
 
 
