@@ -14,19 +14,16 @@ void explain_args(char* prog_name) {
 }
 
 
-// Returns -1 in case of error
-int get_doc_id(char* doc) {
+// Returns -1 in case of error, stops at first whitespace instead of '\0' (atoi)
+int get_doc_id(char* str_id) {
     int pos = 0;
-    // Ignore whitespace at the start of the document
-    while (isspace(doc[pos]))
-        pos++;
     
     // Get each digit of the id 
-    int id = atoi((&doc[pos]));
+    int id = atoi((&str_id[pos]));
     pos++;
-    while (!isspace(doc[pos])) {
-        if (doc[pos] >= '0' && doc[pos] <= '9') {
-            id = id*10 + atoi(&doc[pos]);
+    while (!isspace(str_id[pos])) {
+        if (str_id[pos] >= '0' && str_id[pos] <= '9') {
+            id = id*10 + atoi(&str_id[pos]);
             pos++;
         }
         // Error, not a number, return -1
@@ -37,15 +34,39 @@ int get_doc_id(char* doc) {
 }
 
 
-char* get_pure_doc(char* doc) {
-    int pos = 0;
-    // Id chars
-    while (!isspace(doc[pos]))
-        pos++;
-    // Whitespace after id
-    while (isspace(doc[pos]))
-        pos++;
-    return &doc[pos];
+// Including id
+int get_word_num(char* doc) {
+    int word_num = 0;
+    int i = 0;
+    // Ignore starting whitespace
+    while (isspace(doc[i]) && doc[i] != '\n')
+        i++;
+
+    while (doc[i] != '\n' && doc[i] != '\0') {
+        // If we found a word, pass it
+        if (!isspace(doc[i])) {
+            word_num++;
+            while (!isspace(doc[i]) && doc[i] != '\0' && doc[i] != '\n')
+                i++;
+        }
+        // Then pass all whitespaces except '\n'
+        while (isspace(doc[i]) && doc[i] != '\n')
+            i++;
+    }
+    return word_num;
+}
+
+
+// Including id
+int get_next_word_index(char* doc, int index) {
+    // Pass current word
+    while (!isspace(doc[index]))
+        index++;
+    // Then pass any whitespace after it
+    while (isspace(doc[index]) && doc[index] != '\n')
+        index++;
+
+    return index;
 }
 
 

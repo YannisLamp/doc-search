@@ -19,7 +19,7 @@ void Posting::incr_count() {
 }
 
 
-void Posting::set_next_ptr(PostingListNode* input_ptr) {
+void Posting::set_next_ptr(Posting* input_ptr) {
     next_ptr = input_ptr;
 }
 

@@ -5,17 +5,13 @@
 
 using namespace std;
 
-PostingList::PostingList(char* input_word, int doc_id) : word(input_word), node_num(1) {
+PostingList::PostingList(int doc_id) : node_num(1) {
 	first_node_ptr = new Posting(doc_id);
     last_node_ptr = first_node_ptr;
 }
 
 
-PostingList::~PostingList() {
-    // Free memory for storing the word, allocated in main during the Trie construction
-    free(word);
-	delete first_node_ptr;
-}
+PostingList::~PostingList() { delete first_node_ptr; }
 
 
 void PostingList::insert_doc_id(int doc_id) {
@@ -32,8 +28,4 @@ void PostingList::insert_doc_id(int doc_id) {
     
 int PostingList::get_node_num() {
     return node_num;
-}
-
-char* PostingList::get_word() {
-    return word;
 }

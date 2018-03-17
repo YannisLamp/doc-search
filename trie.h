@@ -7,8 +7,7 @@ class Trie {
 private:
     TrieNode* first_ptr;
 
-    void rec_insert(char* word, TrieNode* curr_node_ptr, 
-                    int curr_letter, int doc_id);
+    void rec_insert(char* word, TrieNode* curr_node_ptr, int doc_id);
 public:
     Trie();
 	~Trie();
