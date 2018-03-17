@@ -39,18 +39,18 @@ int get_word_num(char* doc) {
     int word_num = 0;
     int i = 0;
     // Ignore starting whitespace
-    while (isspace(doc[i]) && doc[i] != '\n')
+    while (isspace(doc[i]) && doc[i] != '\0')
         i++;
 
-    while (doc[i] != '\n' && doc[i] != '\0') {
+    while (doc[i] != '\0') {
         // If we found a word, pass it
         if (!isspace(doc[i])) {
             word_num++;
-            while (!isspace(doc[i]) && doc[i] != '\0' && doc[i] != '\n')
+            while (!isspace(doc[i]) && doc[i] != '\0')
                 i++;
         }
         // Then pass all whitespaces except '\n'
-        while (isspace(doc[i]) && doc[i] != '\n')
+        while (isspace(doc[i]) && doc[i] != '\0')
             i++;
     }
     return word_num;

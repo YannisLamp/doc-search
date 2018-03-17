@@ -1,5 +1,5 @@
-#ifndef TRIENODE
-#define TRIENODE
+#ifndef SYSPRO_PROJECT_1_TRIENODE_H
+#define SYSPRO_PROJECT_1_TRIENODE_H
 
 #include "posting_list.h"
 

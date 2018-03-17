@@ -102,9 +102,12 @@ int main(int argc, char* argv[]) {
             doc_index = get_next_word_index(line , doc_index);
             // Count document size
             int doc_size = 0;
-            while (line[doc_index + doc_size] != '\n')
+            while (line[doc_index + doc_size] != '\0')
                 doc_size++;
+            doc_size++;
             // Allocate space for document (plus '\0')
+            if (line[doc_index + doc_size - 1] == '\n')
+                line[doc_index + doc_size - 1] = ' ';
             map[doc_id] = (char *) malloc((doc_size+1) * sizeof(char));
             alloc_chk(map, map_str);
             // Save document in map

@@ -1,5 +1,5 @@
-#ifndef TRIE
-#define TRIE
+#ifndef SYSPRO_PROJECT_1_TRIE_H
+#define SYSPRO_PROJECT_1_TRIE_H
 
 #include "trie_node.h"
 

@@ -1,5 +1,5 @@
-#ifndef POSTINGLIST
-#define POSTINGLIST
+#ifndef SYSPRO_PROJECT_1_POSTINGLIST_H
+#define SYSPRO_PROJECT_1_POSTINGLIST_H
 
 #include "posting.h"
 

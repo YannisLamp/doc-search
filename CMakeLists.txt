@@ -1,17 +1,19 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.8)
 project(SysPro_Project_1)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(SysPro_Project_1
+set(SOURCE_FILES
         main.cpp
-        posting_list.cpp
-        posting_list.h
         posting.cpp
         posting.h
+        posting_list.cpp
+        posting_list.h
         trie.cpp
         trie.h
         trie_node.cpp
         trie_node.h
         utils.cpp
-        utils.h)
+        utils.h doc_rel_score.cpp doc_rel_score.h)
+
+add_executable(SysPro_Project_1 ${SOURCE_FILES})
