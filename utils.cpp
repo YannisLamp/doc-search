@@ -48,9 +48,9 @@ int get_next_word_index(char* doc, int index) {
 }
 
 
-void alloc_chk(void* alloc_ptr, char* msg) {
+void alloc_chk(void* alloc_ptr) {
     if (alloc_ptr == NULL) {
-        cerr << "Memory allocation for " << msg << " failed" << endl;
+        cerr << "Memory allocation failed" << endl;
         exit(-1);
     }
 }
@@ -58,6 +58,13 @@ void alloc_chk(void* alloc_ptr, char* msg) {
 
 void print_until_space(char* word) {
     int i = 0;
-    while (!isspace(word[i]) && word[i] != '\0') {
-    }
+    while (!isspace(word[i]) && word[i] != '\0')
+        cout << word[i];
+}
+
+int word_len(char* word) {
+    int len = 0;
+    while (!isspace(word[len]) && word[len] != '\0')
+        len++;
+    return len;
 }

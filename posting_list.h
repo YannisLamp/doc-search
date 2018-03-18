@@ -17,6 +17,7 @@ public:
 
     int get_node_num();
     int search_count(int id);
+    Posting* get_first_node_ptr();
 };
 
 

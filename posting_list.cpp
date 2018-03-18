@@ -41,3 +41,5 @@ int PostingList::search_count(int id) {
     else
         return -1;
 }
+
+Posting* PostingList::get_first_node_ptr() { return first_node_ptr; }

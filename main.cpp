@@ -8,6 +8,7 @@
 #include "posting.h"
 #include "query_result.h"
 #include "query_quicksort.h"
+#include <cmath>
 
 using namespace std;
 
@@ -54,10 +55,10 @@ int main(int argc, char* argv[]) {
     // Input document map
     int map_size = 32;
     char** map = (char**)malloc(map_size*sizeof(char*));;
-    alloc_chk(map, "map");
+    alloc_chk(map);
     // The number of words in each document saved in the map
     int* map_word_num = (int*)malloc(map_size*sizeof(int));
-    alloc_chk(map_word_num, "map_word_num");
+    alloc_chk(map_word_num);
     
     // Initialize Trie
     Trie trie;
@@ -92,10 +93,10 @@ int main(int argc, char* argv[]) {
             if (input_id == map_size - 1) {
                 map_size = map_size * 2;
                 map = (char**)realloc(map, map_size * sizeof(char *));
-                alloc_chk(map, "map");
+                alloc_chk(map);
 
                 map_word_num = (int*)realloc(map_word_num, map_size * sizeof(int));
-                alloc_chk(map_word_num, "map_word_num");
+                alloc_chk(map_word_num);
             }
 
             // Save current document word number (get_word_num counts id too)
@@ -108,7 +109,7 @@ int main(int argc, char* argv[]) {
                 line[doc_index + doc_len] = ' ';
 
             map[doc_id] = (char *) malloc((doc_len+1) * sizeof(char));
-            alloc_chk(map, "map[doc_id]");
+            alloc_chk(map[doc_id]);
             // Save document in map
             strcpy(map[doc_id], &line[doc_index]);
 
@@ -153,11 +154,17 @@ int main(int argc, char* argv[]) {
                 else if (input_num == 2) {
                     index = get_next_word_index(line, index);
                     int doc_freq = trie.get_doc_freq(&line[index]);
-                    while (!isspace(line[index]) && line[index] != '\0') {
-                        cout << line[index];
-                        index++;
+                    // If there is a result, print it
+                    if (doc_freq != -1) {
+                        print_until_space(&line[index]);
+                        cout << ' ' << doc_freq << endl;
                     }
-                    cout << ' ' << doc_freq << endl;
+                    // Else
+                    else {
+                        cout << "No results found for ";
+                        print_until_space(&line[index]);
+                        cout << endl;
+                    }
                 }
                 // Wrong command
                 else {
@@ -172,27 +179,100 @@ int main(int argc, char* argv[]) {
                 index = get_next_word_index(line, index);
                 int term_freq = trie.get_term_freq(&line[index], id);
 
-                cout << id << ' ';
-                while (!isspace(line[index]) && line[index] != '\0') {
-                    cout << line[index];
-                    index++;
+                // If there is a result, print it
+                if (term_freq != -1) {
+                    cout << id << ' ';
+                    print_until_space(&line[index]);
+                    cout << ' ' << term_freq << endl;
                 }
-                cout << ' ' << term_freq << endl;
+                // Else
+                else {
+                    cout << "No results found for ";
+                    print_until_space(&line[index]);
+                    cout << endl;
+                }
             }
             // Search command implementation
             else if (strncmp(&line[index], "/search", 7) == 0
                      && input_num <= 11) {
                 // Important data for calculations
-                char* comm_args[10];
+                char* comm_words[10];
                 Posting* curr_posting_ptrs[10];
 
                 for (int i = 0; i < input_num-1; i++) {
                     index = get_next_word_index(line, index);
-                    comm_args[i] = &line[index];
-                    curr_posting_ptrs[i] = trie.search_posting_list(&line[index])->
+                    comm_words[i] = &line[index];
+                    if (trie.search_posting_list(&line[index]) != NULL)
+                        curr_posting_ptrs[i] = trie.search_posting_list(&line[index])->get_first_node_ptr();
+                    else
+                        curr_posting_ptrs[i] = NULL;
+                }
+
+                int results_size = 32;
+                QueryResult** results = (QueryResult**)malloc(results_size*sizeof(QueryResult*));
+                alloc_chk(results);
+
+                double k1 = 1.2;
+                double b = 0.75;
+                int N = doc_id+1;
+
+                // Make calculations and save the query relativity results
+                int min_id = -1;
+                int result_num = 0;
+
+                do {
+                    min_id = -1;
+                    for (int i = 0; i < input_num-1; i++) {
+                        if (curr_posting_ptrs[i] != NULL) {
+                            if (min_id == -1 || min_id > curr_posting_ptrs[i]->get_id())
+                                min_id = curr_posting_ptrs[i]->get_id();
+                        }
+                    }
+
+                    double curr_score = 0;
+                    if (min_id != -1) {
+                        for (int i = 0; i < input_num-1; i++) {
+                            if (min_id == curr_posting_ptrs[i]->get_id()) {
+                                int n_qi = trie.get_doc_freq(comm_words[i]);
+                                // EDO PROSOXI
+                                double idf = log10((N - n_qi + 0.5)/(n_qi + 0.5));
+                                int f_qi = curr_posting_ptrs[i]->get_count();
+                            }
+                        }
+                    }
+                } while (min_id != -1);
+
+                // Then sort results using quicksort, if there are any
+                if (result_num > 0) {
+
+
+
+
+
+
+                    // Finally print top K results or, if there are not that many,
+                    // as many as possible
+                    struct winzise w;
+                    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+                    w.ws_col
+
+
+                }
+                else {
+                    cout << "No results found for " << &comm_words[0] << endl;
                 }
 
 
+
+
+
+
+
+
+                // Free results
+                for (int i = 0; i < result_num; i++)
+                    delete results[i];
+                free(results);
             }
             else if (strncmp(&line[index], "/exit", 5) == 0
                      && input_num == 1) {
@@ -250,7 +330,6 @@ int main(int argc, char* argv[]) {
 
     // Free line buffer
     free(line);
-    line = NULL;
 
 }
 
