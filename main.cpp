@@ -9,6 +9,9 @@
 #include "query_result.h"
 #include "query_quicksort.h"
 #include <cmath>
+#include <sys/ioctl.h>
+#include <unistd.h>
+#include <iomanip>
 
 using namespace std;
 
@@ -29,14 +32,14 @@ int main(int argc, char* argv[]) {
         // Else explain wanted arguments for program execution and terminate
         else {
             explain_args(argv[0]);
-            exit(-1);
+            return -1;
         }
     }
     // Check if a value is assigned to docfile (name of the input file)
     // and if K's value is greater than 0
     if (docfile == NULL || K <= 0) {
         explain_args(argv[0]);
-        exit(-1);
+        return -1;
     }
 
 
@@ -86,6 +89,15 @@ int main(int argc, char* argv[]) {
             int input_id = atoi(line);
             if (input_id != doc_id) {
                 cerr << "Input documents are not properly numbered" << endl;
+                // Free each saved document in the map
+                for (int i = 0; i < doc_id; i++)
+                    free(map[i]);
+                // Free input document map
+                free(map);
+                // Free saved document word numbers
+                free(map_word_num);
+                // Free line buffer
+                free(line);
                 return 1;
             }
 
@@ -123,15 +135,14 @@ int main(int argc, char* argv[]) {
     // Check if the input file is empty (program did not enter the while loop)
     if (doc_id == -1) {
         cerr << "Input file is empty" << endl;
-        exit(-1);
+        // Free input document map
+        free(map);
+        // Free saved document word numbers
+        free(map_word_num);
+        // Free line buffer
+        free(line);
+        return -1;
     }
-    // Calculate N and avgdl
-    int N = doc_id+1;
-    int all_word_num = 0;
-    for(int i = 0; i < N; i++) {
-        all_word_num = all_word_num + map_word_num[i];
-    }
-    double avgdl = (double)all_word_num/(double)N;
 
     /**
     * Main program loop
@@ -139,6 +150,13 @@ int main(int argc, char* argv[]) {
     */
 
     // Necessary data for command execution
+    // Calculate N and avgdl
+    int N = doc_id+1;
+    int all_word_num = 0;
+    for(int i = 0; i < N; i++) {
+        all_word_num = all_word_num + map_word_num[i];
+    }
+    double avgdl = (double)all_word_num/(double)N;
 
     bool exit_prog = false;
     while (exit_prog == false) {
@@ -152,6 +170,7 @@ int main(int argc, char* argv[]) {
             index++;
         int input_num = get_word_num(line);
         if (input_num > 0) {
+            // Df command implementation
             if (strncmp(&line[index], "/df", 3) == 0) {
                 if (input_num == 1) {
                     trie.print_doc_freq();
@@ -165,14 +184,14 @@ int main(int argc, char* argv[]) {
                         print_until_space(&line[index]);
                         cout << ' ' << doc_freq << endl;
                     }
-                    // Else
+                    // Else no results found
                     else {
                         cout << "No results found for ";
                         print_until_space(&line[index]);
                         cout << endl;
                     }
                 }
-                // Wrong command
+                // Wrong command, explain
                 else {
                     explain_commands();
                 }
@@ -239,11 +258,12 @@ int main(int argc, char* argv[]) {
                         for (int i = 0; i < input_num-1; i++) {
                             if (curr_posting_ptrs[i] != NULL && min_id == curr_posting_ptrs[i]->get_id()) {
                                 int n_qi = trie.get_doc_freq(comm_words[i]);
-                                // EDO PROSOXI
                                 double idf = log10((N - n_qi + 0.5)/(n_qi + 0.5));
                                 int f_qi = curr_posting_ptrs[i]->get_count();
+
                                 double this_doc_score = idf * ( (f_qi*(k1 + 1)) /
                                         (f_qi + k1*(1 - b + b*((double)map_word_num[min_id]/avgdl))) );
+
                                 curr_score = curr_score + this_doc_score;
 
                                 // Then the next posting takes this one's place
@@ -260,28 +280,133 @@ int main(int argc, char* argv[]) {
                     }
                 } while (min_id != -1);
 
-                // Then sort results using quicksort, if there are any
+                // Then sort results using quicksort, and finally print them,
+                // if there are any
                 if (result_num > 0) {
                     query_quicksort(results, 0, result_num-1);
-                    for (int i = 0; i< result_num; i++)
-                        cout << results[i]->get_rel_score() << endl;
+
                     // Finally print top K results or, if there are not that many,
                     // as many as possible
-                    //struct winzise w;
-                    //ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-                    //w.ws_col;
 
-                    // x number of digits when x is int
-                    //floor (log10 (abs (x))) + 1
+                    struct winsize win_sz;
+                    ioctl(STDOUT_FILENO, TIOCGWINSZ, &win_sz);
+                    int col_num = win_sz.ws_col;
 
+                    // Find the number of results we will print
+                    int res_print_num = 0;
+                    if (result_num < K)
+                        res_print_num = result_num;
+                    else
+                        res_print_num = K;
 
+                    // Find result number digits
+                    int res_print_digits = (int)floor(log10 (abs (res_print_num))) + 1;
+
+                    // Find maximum id in results
+                    int max_id = 0;
+                    int neg_val = 0;
+                    for (int i = 0; i < res_print_num; i++) {
+                        if (results[i]->get_doc_id() > max_id)
+                            max_id = results[i]->get_doc_id();
+                        if (results[i]->get_rel_score() < 0)
+                            neg_val = 1;
+                    }
+                    // Find maximum id digits
+                    int max_id_digits = (int)floor(log10 (abs (max_id))) + 1;
+
+                    // Starting offset for print
+                    int offset = res_print_digits + 1 + 1 + max_id_digits + 1 + 1 + neg_val
+                                    + 6 + 1 + 1;
+
+                    for (int res_i = 0; res_i < res_print_num; res_i++) {
+
+                        // Print start of result
+                        cout << res_i+1 << '.';
+                        int curr_i_digits = (int)floor(log10 (abs (res_i+1))) + 1;
+                        int sp_num = res_print_digits - curr_i_digits;
+                        for (int i = 0; i < sp_num; i++)
+                            cout << ' ';
+
+                        cout << '(';
+                        int curr_id_digits = (int)floor(log10 (abs (results[res_i]->get_doc_id()))) + 1;
+                        sp_num = max_id_digits - curr_id_digits;
+                        for (int i = 0; i < sp_num; i++)
+                            cout << ' ';
+
+                        cout << results[res_i]->get_doc_id() << ") [";
+                        if (results[res_i]->get_rel_score() >= 0 && neg_val == 1)
+                            cout << ' ';
+                        cout << setprecision(5) << results[res_i]->get_rel_score() << "] ";
+
+                        bool next_res = false;
+                        int index = 0;
+                        while(next_res == false) {
+                            if (index != 0)
+                                for (int i = 0; i < offset; i++)
+                                    cout << ' ';
+
+                            int new_l_off = 0;
+                            int i = 0;
+                            int curr_doc_id = results[res_i]->get_doc_id();
+                            while (i < col_num - offset && next_res == false) {
+                                if (map[curr_doc_id][index + i] == '\0') {
+                                    next_res = true;
+                                    new_l_off = i;
+                                }
+                                else if (isspace(map[curr_doc_id][index + i]))
+                                    new_l_off = i;
+
+                                i++;
+                            }
+                            for (i = 0; i < new_l_off; i++) {
+                                if (isspace(map[curr_doc_id][index + i]))
+                                    cout << ' ';
+                                else
+                                    cout << map[curr_doc_id][index + i];
+                            }
+
+                            cout << '\n';
+                            for (i = 0; i < offset; i++)
+                                cout << ' ';
+
+                            i = 0;
+                            while (i < new_l_off) {
+                                if (isspace(map[curr_doc_id][index + i])) {
+                                    cout << ' ';
+                                    i++;
+                                }
+                                else {
+                                    int curr_len = word_len(&map[curr_doc_id][index + i]);
+                                    for (int input_i = 0; input_i < input_num-1; input_i++) {
+                                        int in_len = word_len(comm_words[input_i]);
+                                        if (curr_len == in_len
+                                            && strncmp(comm_words[input_i], &map[curr_doc_id][index + i],
+                                                       in_len) == 0) {
+                                            while (!isspace(map[curr_doc_id][index + i])
+                                                   && map[curr_doc_id][index + i] != '\0') {
+                                                cout << '^';
+                                                i++;
+                                            }
+                                        }
+                                        else {
+                                            cout << ' ';
+                                            i++;
+                                        }
+                                    }
+                                }
+                            }
+                            cout << '\n';
+                            for (i = 0; i <= offset; i++)
+                                cout << ' ';
+                            index = index + new_l_off;
+                        }
+
+                    }
+                    cout << endl;
                 }
                 else {
                     cout << "No results found for query" << endl;
                 }
-
-
-
 
                 // Free results
                 for (int i = 0; i < result_num; i++)
@@ -292,7 +417,7 @@ int main(int argc, char* argv[]) {
                      && input_num == 1) {
                 exit_prog = true;
             }
-            // Wrong command
+            // Wrong command, explain
             else {
                 explain_commands();
             }
@@ -300,20 +425,21 @@ int main(int argc, char* argv[]) {
         }
     }
 
+    /**
+    * End program
+    */
 
-
-    // Delete Trie
-
-
+    // Free each saved document in the map
+    for (int i = 0; i < doc_id; i++)
+        free(map[i]);
     // Free input document map
-    //for (int i = 0; i < ; i++)
-        //free()
-
-    // fclose
-
+    free(map);
+    // Free saved document word numbers
+    free(map_word_num);
     // Free line buffer
     free(line);
-
+    // Close input file
+    fclose(docfile_ptr);
 }
 
 

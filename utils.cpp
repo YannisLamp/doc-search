@@ -14,7 +14,11 @@ void explain_args(char* prog_name) {
 }
 
 void explain_commands() {
-
+    cerr << "Acceptable commands:\n/df"
+            "\n/df word (where word is "
+            "\n/tf id word"
+            "\n/search words (where words are the "
+            "\n/exit" << endl;
 }
 
 
