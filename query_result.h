@@ -8,11 +8,6 @@ private:
     double rel_score;
 
 public:
-    // Oveload > operator
-    bool operator > (QueryResult const &left, QueryResult const &right) {
-        return left.rel_score > right.rel_score;
-    }
-
     int get_doc_id();
     double get_rel_score();
 };

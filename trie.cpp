@@ -103,7 +103,7 @@ void Trie::rec_print_doc_freq(TrieNode* curr_node_ptr, char** word,
     (*word)[curr_len] = '\0';
 
     if (curr_node_ptr->get_posting_list_ptr() != NULL)
-        cout << *word << " " << curr_node_ptr->get_posting_list_ptr()->get_node_num() << endl;
+        cout << *word << " " << curr_node_ptr->get_posting_list_ptr()->get_node_num() << '\n';
 
     if (curr_node_ptr->get_down_ptr() != NULL)
         rec_print_doc_freq(curr_node_ptr->get_down_ptr(), word, size, curr_len);

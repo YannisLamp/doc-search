@@ -5,8 +5,9 @@
 
 #include "utils.h"
 #include "trie.h"
+#include "posting.h"
 #include "query_result.h"
-#include "quicksort.h"
+#include "query_quicksort.h"
 
 using namespace std;
 
@@ -132,7 +133,6 @@ int main(int argc, char* argv[]) {
 
     // Necessary data for command execution
 
-
     bool exit_prog = false;
     while (exit_prog == false) {
         read = getline(&line, &len, stdin);
@@ -146,12 +146,18 @@ int main(int argc, char* argv[]) {
         int input_num = get_word_num(line);
         if (input_num > 0) {
             if (strncmp(&line[index], "/df", 3) == 0) {
-                if (input_num == 1)
+                if (input_num == 1) {
                     trie.print_doc_freq();
+                    cout << endl;
+                }
                 else if (input_num == 2) {
                     index = get_next_word_index(line, index);
                     int doc_freq = trie.get_doc_freq(&line[index]);
-
+                    while (!isspace(line[index]) && line[index] != '\0') {
+                        cout << line[index];
+                        index++;
+                    }
+                    cout << ' ' << doc_freq << endl;
                 }
                 // Wrong command
                 else {
@@ -161,13 +167,31 @@ int main(int argc, char* argv[]) {
             else if (strncmp(&line[index], "/tf", 3) == 0
                     && input_num == 3) {
                 index = get_next_word_index(line, index);
-                int id =
-                int term_dreq = trie.get_term_freq(&line[index], )
+                int id = atoi(&line[index]);
 
+                index = get_next_word_index(line, index);
+                int term_freq = trie.get_term_freq(&line[index], id);
+
+                cout << id << ' ';
+                while (!isspace(line[index]) && line[index] != '\0') {
+                    cout << line[index];
+                    index++;
+                }
+                cout << ' ' << term_freq << endl;
             }
             // Search command implementation
             else if (strncmp(&line[index], "/search", 7) == 0
                      && input_num <= 11) {
+                // Important data for calculations
+                char* comm_args[10];
+                Posting* curr_posting_ptrs[10];
+
+                for (int i = 0; i < input_num-1; i++) {
+                    index = get_next_word_index(line, index);
+                    comm_args[i] = &line[index];
+                    curr_posting_ptrs[i] = trie.search_posting_list(&line[index])->
+                }
+
 
             }
             else if (strncmp(&line[index], "/exit", 5) == 0

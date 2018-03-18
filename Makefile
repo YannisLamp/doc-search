@@ -1,8 +1,8 @@
 # Source, Includes
-INCL   = exp_rand.h process.h dl_node.h process_queue.h priority_queue.h sem_queue.h
-SRC    = main.cpp exp_rand.cpp process.cpp dl_node.cpp process_queue.cpp priority_queue.cpp sem_queue.cpp
+INCL   = trie.h trie_node.h posting_list.h posting.h utils.h query_result.h query_quicksort.h
+SRC    = main.cpp trie.cpp trie_node.cpp posting_list.cpp posting.cpp utils.cpp query_result.cpp query_quicksort.cpp
 OBJ    = $(SRC:.c=.o)
-PROG   = psim
+PROG   = search
 
 # Compiler, Linker Defines
 CC      = g++

@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "quicksort.h"
+#include "query_quicksort.h"
 #include "query_result.h"
 
 /*
@@ -27,7 +27,7 @@ int partition(QueryResult** results, int low, int high) {
     int leftwall = low - 1;
 
     for (int i = low; i <= high - 1; i++) {
-        if (*(results[i]) > *pivot) {
+        if (results[i]->get_rel_score() > pivot->get_rel_score()) {
             leftwall++;
             result_swap(&results[i], &results[leftwall]);
         }
