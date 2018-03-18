@@ -14,6 +14,6 @@ set(SOURCE_FILES
         trie_node.cpp
         trie_node.h
         utils.cpp
-        utils.h doc_rel_score.cpp doc_rel_score.h)
+        utils.h query_result.cpp query_result.h quicksort.cpp quicksort.h)
 
 add_executable(SysPro_Project_1 ${SOURCE_FILES})

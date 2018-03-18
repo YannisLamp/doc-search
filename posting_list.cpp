@@ -29,3 +29,15 @@ void PostingList::insert_doc_id(int doc_id) {
 int PostingList::get_node_num() {
     return node_num;
 }
+
+
+int PostingList::search_count(int id) {
+    Posting* curr_posting = first_node_ptr;
+    while (curr_posting != NULL && id > curr_posting->get_id()) {
+        curr_posting = curr_posting->get_next_ptr();
+    }
+    if (curr_posting != NULL && id == curr_posting->get_id())
+        return curr_posting->get_count();
+    else
+        return -1;
+}

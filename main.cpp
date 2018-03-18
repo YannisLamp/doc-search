@@ -5,6 +5,8 @@
 
 #include "utils.h"
 #include "trie.h"
+#include "query_result.h"
+#include "quicksort.h"
 
 using namespace std;
 
@@ -38,7 +40,7 @@ int main(int argc, char* argv[]) {
 
     /** 
     * Parse docfile
-    * Initialize Trie and insert each word in map into it
+    * Insert every input word into Trie
     */
 
     // Open input document file
@@ -50,13 +52,11 @@ int main(int argc, char* argv[]) {
 
     // Input document map
     int map_size = 32;
-    char** map = (char**)malloc(map_size*sizeof(char*));
-    char map_str[] = "map";
-    alloc_chk(map, map_str);
+    char** map = (char**)malloc(map_size*sizeof(char*));;
+    alloc_chk(map, "map");
     // The number of words in each document saved in the map
-    int* word_num = (int*)malloc(map_size*sizeof(int));
-    char word_num_str[] = "word_num";
-    alloc_chk(word_num, word_num_str);
+    int* map_word_num = (int*)malloc(map_size*sizeof(int));
+    alloc_chk(map_word_num, "map_word_num");
     
     // Initialize Trie
     Trie trie;
@@ -75,7 +75,7 @@ int main(int argc, char* argv[]) {
         int doc_index = 0;
 
         // Pass whitespace at the start of the document
-        while (isspace(line[doc_index]) && line[doc_index] != '\0')
+        while (isspace(line[doc_index]))
             doc_index++;
         // If next char is not '\0' (document is not empty)
         if (line[doc_index] != '\0') {
@@ -86,20 +86,19 @@ int main(int argc, char* argv[]) {
                 cerr << "Input documents are not properly numbered" << endl;
                 return 1;
             }
-            cout << doc_id << endl;
 
             // If map is full, realloc
             if (input_id == map_size - 1) {
                 map_size = map_size * 2;
                 map = (char**)realloc(map, map_size * sizeof(char *));
-                alloc_chk(map, map_str);
+                alloc_chk(map, "map");
 
-                word_num = (int*)realloc(word_num, map_size * sizeof(int));
-                alloc_chk(word_num, word_num_str);
+                map_word_num = (int*)realloc(map_word_num, map_size * sizeof(int));
+                alloc_chk(map_word_num, "map_word_num");
             }
 
             // Save current document word number (get_word_num counts id too)
-            word_num[doc_id] = get_word_num(line) - 1;
+            map_word_num[doc_id] = get_word_num(line) - 1;
             doc_index = get_next_word_index(line , doc_index);
             // Count document size
             int doc_len = strlen(&line[doc_index]);
@@ -108,12 +107,12 @@ int main(int argc, char* argv[]) {
                 line[doc_index + doc_len] = ' ';
 
             map[doc_id] = (char *) malloc((doc_len+1) * sizeof(char));
-            alloc_chk(map, map_str);
+            alloc_chk(map, "map[doc_id]");
             // Save document in map
             strcpy(map[doc_id], &line[doc_index]);
 
             // Insert each word of the document into Trie
-            for (int i = 0; i < word_num[doc_id]; i++) {
+            for (int i = 0; i < map_word_num[doc_id]; i++) {
                 trie.insert(&line[doc_index], doc_id);
                 doc_index = get_next_word_index(line , doc_index);
             }
@@ -126,12 +125,14 @@ int main(int argc, char* argv[]) {
     }
 
 
-    trie.print_doc_freq();
-
-    /** 
-    * 
+    /**
+    * Main program loop
+    * Get and execute user commands
     */
-/*
+
+    // Necessary data for command execution
+
+
     bool exit_prog = false;
     while (exit_prog == false) {
         read = getline(&line, &len, stdin);
@@ -139,13 +140,48 @@ int main(int argc, char* argv[]) {
         if (read == -1) {
 
         }
+        int index = 0;
+        while (isspace(line[index]))
+            index++;
+        int input_num = get_word_num(line);
+        if (input_num > 0) {
+            if (strncmp(&line[index], "/df", 3) == 0) {
+                if (input_num == 1)
+                    trie.print_doc_freq();
+                else if (input_num == 2) {
+                    index = get_next_word_index(line, index);
+                    int doc_freq = trie.get_doc_freq(&line[index]);
 
+                }
+                // Wrong command
+                else {
 
+                }
+            }
+            else if (strncmp(&line[index], "/tf", 3) == 0
+                    && input_num == 3) {
+                index = get_next_word_index(line, index);
+                int id =
+                int term_dreq = trie.get_term_freq(&line[index], )
 
+            }
+            // Search command implementation
+            else if (strncmp(&line[index], "/search", 7) == 0
+                     && input_num <= 11) {
 
+            }
+            else if (strncmp(&line[index], "/exit", 5) == 0
+                     && input_num == 1) {
+                exit_prog = true;
+            }
+            // Wrong command
+            else {
+
+            }
+
+        }
     }
 
-*/
 
 
 

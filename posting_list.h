@@ -16,6 +16,7 @@ public:
     void insert_doc_id(int doc_id);
 
     int get_node_num();
+    int search_count(int id);
 };
 
 

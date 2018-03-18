@@ -14,25 +14,6 @@ void explain_args(char* prog_name) {
 }
 
 
-// Returns -1 in case of error, stops at first whitespace instead of '\0' (atoi)
-int get_doc_id(char* str_id) {
-    int pos = 0;
-    // Get each digit of the id 
-    int id = atoi(&str_id[pos]);
-    pos++;
-    while (!isspace(str_id[pos])) {
-        if (str_id[pos] >= '0' && str_id[pos] <= '9') {
-            id = id*10 + atoi(&str_id[pos]);
-            pos++;
-        }
-        // Error, not a number, return -1
-        else 
-            return -1;
-    }
-    return id;
-}
-
-
 int get_word_num(char* doc) {
     int word_num = 0;
     int i = 0;
@@ -71,5 +52,12 @@ void alloc_chk(void* alloc_ptr, char* msg) {
     if (alloc_ptr == NULL) {
         cerr << "Memory allocation for " << msg << " failed" << endl;
         exit(-1);
+    }
+}
+
+
+void print_until_space(char* word) {
+    int i = 0;
+    while (!isspace(word[i]) && word[i] != '\0') {
     }
 }
