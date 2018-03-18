@@ -3,8 +3,8 @@
 
 #include "query_result.h"
 
-void quicksort(QueryResult** results, int low, int high);
-int partition(QueryResult** results, int low, int high);
-void result_swap(QueryResult** left, QueryResult** right);
+void query_quicksort(QueryResult** results, int low, int high);
+int query_partition(QueryResult** results, int low, int high);
+void result_swap(QueryResult* left, QueryResult* right);
 
 #endif

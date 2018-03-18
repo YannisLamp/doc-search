@@ -125,7 +125,13 @@ int main(int argc, char* argv[]) {
         cerr << "Input file is empty" << endl;
         exit(-1);
     }
-
+    // Calculate N and avgdl
+    int N = doc_id+1;
+    int all_word_num = 0;
+    for(int i = 0; i < N; i++) {
+        all_word_num = all_word_num + map_word_num[i];
+    }
+    double avgdl = (double)all_word_num/(double)N;
 
     /**
     * Main program loop
@@ -168,7 +174,7 @@ int main(int argc, char* argv[]) {
                 }
                 // Wrong command
                 else {
-
+                    explain_commands();
                 }
             }
             else if (strncmp(&line[index], "/tf", 3) == 0
@@ -214,7 +220,6 @@ int main(int argc, char* argv[]) {
 
                 double k1 = 1.2;
                 double b = 0.75;
-                int N = doc_id+1;
 
                 // Make calculations and save the query relativity results
                 int min_id = -1;
@@ -232,39 +237,48 @@ int main(int argc, char* argv[]) {
                     double curr_score = 0;
                     if (min_id != -1) {
                         for (int i = 0; i < input_num-1; i++) {
-                            if (min_id == curr_posting_ptrs[i]->get_id()) {
+                            if (curr_posting_ptrs[i] != NULL && min_id == curr_posting_ptrs[i]->get_id()) {
                                 int n_qi = trie.get_doc_freq(comm_words[i]);
                                 // EDO PROSOXI
                                 double idf = log10((N - n_qi + 0.5)/(n_qi + 0.5));
                                 int f_qi = curr_posting_ptrs[i]->get_count();
+                                double this_doc_score = idf * ( (f_qi*(k1 + 1)) /
+                                        (f_qi + k1*(1 - b + b*((double)map_word_num[min_id]/avgdl))) );
+                                curr_score = curr_score + this_doc_score;
+
+                                // Then the next posting takes this one's place
+                                curr_posting_ptrs[i] = curr_posting_ptrs[i]->get_next_ptr();
                             }
                         }
+                        result_num++;
+                        if (results_size == result_num-1) {
+                            results_size = results_size * 2;
+                            results = (QueryResult**)realloc(results, results_size*sizeof(QueryResult*));
+                            alloc_chk(results);
+                        }
+                        results[result_num-1] = new QueryResult(min_id, curr_score);
                     }
                 } while (min_id != -1);
 
                 // Then sort results using quicksort, if there are any
                 if (result_num > 0) {
-
-
-
-
-
-
+                    query_quicksort(results, 0, result_num-1);
+                    for (int i = 0; i< result_num; i++)
+                        cout << results[i]->get_rel_score() << endl;
                     // Finally print top K results or, if there are not that many,
                     // as many as possible
-                    struct winzise w;
-                    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-                    w.ws_col
+                    //struct winzise w;
+                    //ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+                    //w.ws_col;
+
+                    // x number of digits when x is int
+                    //floor (log10 (abs (x))) + 1
 
 
                 }
                 else {
-                    cout << "No results found for " << &comm_words[0] << endl;
+                    cout << "No results found for query" << endl;
                 }
-
-
-
-
 
 
 
@@ -280,16 +294,11 @@ int main(int argc, char* argv[]) {
             }
             // Wrong command
             else {
-
+                explain_commands();
             }
 
         }
     }
-
-
-
-
-
 
 
 
@@ -301,32 +310,6 @@ int main(int argc, char* argv[]) {
         //free()
 
     // fclose
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     // Free line buffer
     free(line);

@@ -13,6 +13,10 @@ void explain_args(char* prog_name) {
                 "(optional, default value is 10, must be greater than 0)" << endl;
 }
 
+void explain_commands() {
+
+}
+
 
 int get_word_num(char* doc) {
     int word_num = 0;
@@ -58,8 +62,10 @@ void alloc_chk(void* alloc_ptr) {
 
 void print_until_space(char* word) {
     int i = 0;
-    while (!isspace(word[i]) && word[i] != '\0')
+    while (!isspace(word[i]) && word[i] != '\0') {
         cout << word[i];
+        i++;
+    }
 }
 
 int word_len(char* word) {

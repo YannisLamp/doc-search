@@ -8,6 +8,9 @@ private:
     double rel_score;
 
 public:
+    QueryResult(int id, double score);
+    ~QueryResult();
+
     int get_doc_id();
     double get_rel_score();
 };

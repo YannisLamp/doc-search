@@ -86,6 +86,7 @@ void Trie::rec_insert(char* word, TrieNode* curr_node_ptr, int doc_id) {
 void Trie::print_doc_freq() {
     int size = 8;
     char* word = (char*) malloc(size*sizeof(char));
+    alloc_chk(word);
     rec_print_doc_freq(first_ptr, &word, &size, 0);
     free(word);
 }
@@ -95,7 +96,7 @@ void Trie::rec_print_doc_freq(TrieNode* curr_node_ptr, char** word,
     if ((curr_len + 2) > *size) {
         *size = *size * 2;
         *word = (char*)realloc(*word, *size);
-        alloc_chk(word, "word");
+        alloc_chk(word);
     }
 
     curr_len++;
