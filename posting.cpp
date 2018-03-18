@@ -5,7 +5,7 @@ using namespace std;
 
 
 Posting::Posting(int doc_id) : id(doc_id), count(1),
-                                                    next_ptr(NULL) {
+                               next_ptr(NULL) {
 }
 
 
