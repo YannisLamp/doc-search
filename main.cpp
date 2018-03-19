@@ -241,8 +241,8 @@ int main(int argc, char* argv[]) {
                 double b = 0.75;
 
                 // Make calculations and save the query relativity results
-                int min_id = -1;
                 int result_num = 0;
+                int min_id = -1;
 
                 do {
                     min_id = -1;
@@ -292,6 +292,7 @@ int main(int argc, char* argv[]) {
                     ioctl(STDOUT_FILENO, TIOCGWINSZ, &win_sz);
                     int col_num = win_sz.ws_col;
 
+                    //int col_num =60;
                     // Find the number of results we will print
                     int res_print_num = 0;
                     if (result_num < K)
@@ -314,12 +315,22 @@ int main(int argc, char* argv[]) {
                     // Find maximum id digits
                     int max_id_digits = (int)floor(log10 (abs (max_id))) + 1;
 
+                    // Find maximum search score
+                    double max_score = 0;
+                    bool found_score = false;
+                    for (int res_i = 0; res_i < res_print_num; res_i++) {
+                        if (results[res_i]->get_rel_score() > max_score || found_score == false) {
+                            max_score = results[res_i]->get_rel_score();
+                            found_score = true;
+                        }
+                    }
+                    int max_score_digits = (int)floor(log10 (abs ((int)max_score))) + 1;
+
                     // Starting offset for print
                     int offset = res_print_digits + 1 + 1 + max_id_digits + 1 + 1 + neg_val
-                                    + 6 + 1 + 1;
+                                    + max_score_digits + 5 + 1 + 1;
 
                     for (int res_i = 0; res_i < res_print_num; res_i++) {
-
                         // Print start of result
                         cout << res_i+1 << '.';
                         int curr_i_digits = (int)floor(log10 (abs (res_i+1))) + 1;
@@ -333,11 +344,16 @@ int main(int argc, char* argv[]) {
                         for (int i = 0; i < sp_num; i++)
                             cout << ' ';
 
-                        cout << results[res_i]->get_doc_id() << ") [";
+                        cout << results[res_i]->get_doc_id() << ")[";
                         if (results[res_i]->get_rel_score() >= 0 && neg_val == 1)
                             cout << ' ';
-                        cout << setprecision(5) << results[res_i]->get_rel_score() << "] ";
+                        int curr_score_digits = (int)floor(log10 (abs ((int)results[res_i]->get_rel_score()))) + 1;
+                        sp_num = max_score_digits -  curr_score_digits;
+                        for (int i = 0; i < sp_num; i++)
+                            cout << ' ';
+                        cout << fixed << setprecision(4) << results[res_i]->get_rel_score() << "] ";
 
+                        // Print text and underline found words
                         bool next_res = false;
                         int index = 0;
                         while(next_res == false) {
@@ -348,6 +364,7 @@ int main(int argc, char* argv[]) {
                             int new_l_off = 0;
                             int i = 0;
                             int curr_doc_id = results[res_i]->get_doc_id();
+                            // Find where to change line
                             while (i < col_num - offset && next_res == false) {
                                 if (map[curr_doc_id][index + i] == '\0') {
                                     next_res = true;
@@ -358,49 +375,54 @@ int main(int argc, char* argv[]) {
 
                                 i++;
                             }
+                            // Print this line
                             for (i = 0; i < new_l_off; i++) {
                                 if (isspace(map[curr_doc_id][index + i]))
                                     cout << ' ';
                                 else
                                     cout << map[curr_doc_id][index + i];
                             }
-
                             cout << '\n';
+
+                            // Next line (for underlining found words)
                             for (i = 0; i < offset; i++)
                                 cout << ' ';
-
                             i = 0;
                             while (i < new_l_off) {
+                                // Print spaces for spaces
                                 if (isspace(map[curr_doc_id][index + i])) {
                                     cout << ' ';
                                     i++;
                                 }
+                                // Only print '^' for found words
                                 else {
                                     int curr_len = word_len(&map[curr_doc_id][index + i]);
-                                    for (int input_i = 0; input_i < input_num-1; input_i++) {
-                                        int in_len = word_len(comm_words[input_i]);
+                                    // For words in query, check if its the same word
+                                    int search_w_i = 0;
+                                    bool match = false;
+                                    while (search_w_i < input_num-1 && match == false) {
+                                        int in_len = word_len(comm_words[search_w_i]);
                                         if (curr_len == in_len
-                                            && strncmp(comm_words[input_i], &map[curr_doc_id][index + i],
+                                            && strncmp(comm_words[search_w_i], &map[curr_doc_id][index + i],
                                                        in_len) == 0) {
-                                            while (!isspace(map[curr_doc_id][index + i])
-                                                   && map[curr_doc_id][index + i] != '\0') {
-                                                cout << '^';
-                                                i++;
-                                            }
+                                            match = true;
                                         }
-                                        else {
+                                        search_w_i++;
+                                    }
+                                    // If it is, print '^' equal to the length of the word, else print ' '
+                                    while (!isspace(map[curr_doc_id][index + i])
+                                           && map[curr_doc_id][index + i] != '\0') {
+                                        if (match)
+                                            cout << '^';
+                                        else
                                             cout << ' ';
-                                            i++;
-                                        }
+                                        i++;
                                     }
                                 }
                             }
                             cout << '\n';
-                            for (i = 0; i <= offset; i++)
-                                cout << ' ';
-                            index = index + new_l_off;
+                            index = index + new_l_off + 1;
                         }
-
                     }
                     cout << endl;
                 }
