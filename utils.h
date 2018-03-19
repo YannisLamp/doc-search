@@ -1,7 +1,10 @@
 #ifndef UTILS
 #define UTILS
 
-// Uti
+/*
+ * Utility functions used in main
+ */
+
 void explain_args(char* pname);
 void explain_commands();
 int get_word_num(char* doc);

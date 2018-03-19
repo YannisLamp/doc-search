@@ -9,7 +9,7 @@
 #include "query_result.h"
 #include "query_quicksort.h"
 #include <cmath>
-#include <sys/ioctl.h>
+//#include <sys/ioctl.h>
 #include <unistd.h>
 #include <iomanip>
 
@@ -98,7 +98,7 @@ int main(int argc, char* argv[]) {
                 free(map_word_num);
                 // Free line buffer
                 free(line);
-                return 1;
+                return -1;
             }
 
             // If map is full, realloc
@@ -163,8 +163,19 @@ int main(int argc, char* argv[]) {
         read = getline(&line, &len, stdin);
         // Check for errors in getline
         if (read == -1) {
-
+            cerr << "Getline error, exit" << endl;
+            // Free each saved document in the map
+            for (int i = 0; i < N; i++)
+                free(map[i]);
+            // Free input document map
+            free(map);
+            // Free saved document word numbers
+            free(map_word_num);
+            // Free line buffer
+            free(line);
+            return -1;
         }
+        // Consume whitespace from input
         int index = 0;
         while (isspace(line[index]))
             index++;
@@ -186,9 +197,8 @@ int main(int argc, char* argv[]) {
                     }
                     // Else no results found
                     else {
-                        cout << "No results found for ";
                         print_until_space(&line[index]);
-                        cout << endl;
+                        cout << ' ' << 0 << endl;
                     }
                 }
                 // Wrong command, explain
@@ -204,22 +214,21 @@ int main(int argc, char* argv[]) {
                 index = get_next_word_index(line, index);
                 int term_freq = trie.get_term_freq(&line[index], id);
 
-                // If there is a result, print it
+                // If term_freq found nothing, then result is 0
+                if (term_freq == -1)
+                    term_freq = 0;
+
+                // Print results
                 if (term_freq != -1) {
                     cout << id << ' ';
                     print_until_space(&line[index]);
                     cout << ' ' << term_freq << endl;
                 }
-                // Else
-                else {
-                    cout << "No results found for ";
-                    print_until_space(&line[index]);
-                    cout << endl;
-                }
             }
             // Search command implementation
             else if (strncmp(&line[index], "/search", 7) == 0
                      && input_num <= 11) {
+
                 // Important data for calculations
                 char* comm_words[10];
                 Posting* curr_posting_ptrs[10];
@@ -253,9 +262,11 @@ int main(int argc, char* argv[]) {
                         }
                     }
 
-                    double curr_score = 0;
+                    // If there are still documents that contain the query words
                     if (min_id != -1) {
+                        double curr_score = 0;
                         for (int i = 0; i < input_num-1; i++) {
+                            // If this word is in the current document, calculate relativity score for that word
                             if (curr_posting_ptrs[i] != NULL && min_id == curr_posting_ptrs[i]->get_id()) {
                                 int n_qi = trie.get_doc_freq(comm_words[i]);
                                 double idf = log10((N - n_qi + 0.5)/(n_qi + 0.5));
@@ -270,6 +281,7 @@ int main(int argc, char* argv[]) {
                                 curr_posting_ptrs[i] = curr_posting_ptrs[i]->get_next_ptr();
                             }
                         }
+                        // Realloc for results
                         result_num++;
                         if (results_size == result_num-1) {
                             results_size = results_size * 2;
@@ -288,11 +300,12 @@ int main(int argc, char* argv[]) {
                     // Finally print top K results or, if there are not that many,
                     // as many as possible
 
-                    struct winsize win_sz;
-                    ioctl(STDOUT_FILENO, TIOCGWINSZ, &win_sz);
-                    int col_num = win_sz.ws_col;
+                    // Get column size
+                    //struct winsize win_sz;
+                    //ioctl(STDOUT_FILENO, TIOCGWINSZ, &win_sz);
+                    //int col_num = win_sz.ws_col;
 
-                    //int col_num =60;
+                    int col_num = 80;
                     // Find the number of results we will print
                     int res_print_num = 0;
                     if (result_num < K)
@@ -313,18 +326,26 @@ int main(int argc, char* argv[]) {
                             neg_val = 1;
                     }
                     // Find maximum id digits
-                    int max_id_digits = (int)floor(log10 (abs (max_id))) + 1;
+                    int max_id_digits;
+                    if (max_id == 0)
+                        max_id_digits = 1;
+                    else
+                        max_id_digits = (int)floor(log10 (abs (max_id))) + 1;
 
                     // Find maximum search score
                     double max_score = 0;
                     bool found_score = false;
                     for (int res_i = 0; res_i < res_print_num; res_i++) {
-                        if (results[res_i]->get_rel_score() > max_score || found_score == false) {
+                        if (results[res_i]->get_rel_score() > max_score || !found_score) {
                             max_score = results[res_i]->get_rel_score();
                             found_score = true;
                         }
                     }
-                    int max_score_digits = (int)floor(log10 (abs ((int)max_score))) + 1;
+                    int max_score_digits;
+                    if ((int)max_score == 0)
+                        max_score_digits = 1;
+                    else
+                        max_score_digits = (int)floor(log10 (abs ((int)max_score))) + 1;
 
                     // Starting offset for print
                     int offset = res_print_digits + 1 + 1 + max_id_digits + 1 + 1 + neg_val
@@ -400,7 +421,7 @@ int main(int argc, char* argv[]) {
                                     // For words in query, check if its the same word
                                     int search_w_i = 0;
                                     bool match = false;
-                                    while (search_w_i < input_num-1 && match == false) {
+                                    while (search_w_i < input_num-1 && !match) {
                                         int in_len = word_len(comm_words[search_w_i]);
                                         if (curr_len == in_len
                                             && strncmp(comm_words[search_w_i], &map[curr_doc_id][index + i],
@@ -426,9 +447,10 @@ int main(int argc, char* argv[]) {
                     }
                     cout << endl;
                 }
-                else {
+
+                // Else no results found
+                else
                     cout << "No results found for query" << endl;
-                }
 
                 // Free results
                 for (int i = 0; i < result_num; i++)
@@ -452,7 +474,7 @@ int main(int argc, char* argv[]) {
     */
 
     // Free each saved document in the map
-    for (int i = 0; i < doc_id; i++)
+    for (int i = 0; i < N; i++)
         free(map[i]);
     // Free input document map
     free(map);
@@ -462,8 +484,6 @@ int main(int argc, char* argv[]) {
     free(line);
     // Close input file
     fclose(docfile_ptr);
+
+    return 0;
 }
-
-
-
-

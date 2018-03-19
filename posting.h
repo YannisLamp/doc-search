@@ -1,6 +1,7 @@
 #ifndef SYSPRO_PROJECT_1_POSTING_H
 #define SYSPRO_PROJECT_1_POSTING_H
 
+
 class Posting {
 private:
     int id;

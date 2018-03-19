@@ -13,6 +13,7 @@ void explain_args(char* prog_name) {
                 "(optional, default value is 10, must be greater than 0)" << endl;
 }
 
+// Explain wanted commands during program execution
 void explain_commands() {
     cerr << "Acceptable commands:\n/df"
             "\n/df word (where word is "
@@ -21,7 +22,7 @@ void explain_commands() {
             "\n/exit" << endl;
 }
 
-
+// Get word number in a given string
 int get_word_num(char* doc) {
     int word_num = 0;
     int i = 0;
@@ -36,14 +37,15 @@ int get_word_num(char* doc) {
             while (!isspace(doc[i]) && doc[i] != '\0')
                 i++;
         }
-        // Then pass all whitespaces except '\n'
+        // Then pass all whitespaces except '\0'
         while (isspace(doc[i]) && doc[i] != '\0')
             i++;
     }
     return word_num;
 }
 
-
+// If doc[index] is the start of a word, then returned index is the
+// start of the next word in the same string (doc), if it exists
 int get_next_word_index(char* doc, int index) {
     // Pass current word
     while (!isspace(doc[index]))
@@ -56,6 +58,8 @@ int get_next_word_index(char* doc, int index) {
 }
 
 
+// Performs standard malloc and realloc check, and exits
+// program if they failed
 void alloc_chk(void* alloc_ptr) {
     if (alloc_ptr == NULL) {
         cerr << "Memory allocation failed" << endl;
@@ -64,6 +68,7 @@ void alloc_chk(void* alloc_ptr) {
 }
 
 
+// Prints word until it finds whitespace or the end of the input string
 void print_until_space(char* word) {
     int i = 0;
     while (!isspace(word[i]) && word[i] != '\0') {
@@ -72,6 +77,9 @@ void print_until_space(char* word) {
     }
 }
 
+
+// Returns the length of the input word
+// (stops when it finds whitespace or end of string)
 int word_len(char* word) {
     int len = 0;
     while (!isspace(word[len]) && word[len] != '\0')

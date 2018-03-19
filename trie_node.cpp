@@ -10,8 +10,9 @@ TrieNode::TrieNode(char input_letter) : letter(input_letter), posting_list_ptr(N
 
 TrieNode::~TrieNode() {
 	delete posting_list_ptr;
-	delete right_ptr;
 	delete down_ptr;
+	delete right_ptr;
+
 }
 
 
