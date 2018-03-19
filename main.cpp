@@ -52,7 +52,7 @@ int main(int argc, char* argv[]) {
     FILE* docfile_ptr = fopen(docfile, "r");
     if (docfile_ptr == NULL) {
         cerr << "File " << docfile << " could not be opened" << endl;
-        exit(-1); 
+        exit(-1);
     }
 
     // Input document map
@@ -62,7 +62,7 @@ int main(int argc, char* argv[]) {
     // The number of words in each document saved in the map
     int* map_word_num = (int*)malloc(map_size*sizeof(int));
     alloc_chk(map_word_num);
-    
+
     // Initialize Trie
     Trie trie;
 
@@ -117,9 +117,6 @@ int main(int argc, char* argv[]) {
             // Count document size
             int doc_len = strlen(&line[doc_index]);
             // Allocate space for document (plus '\0')
-            if (line[doc_index + doc_len] == '\n')
-                line[doc_index + doc_len] = ' ';
-
             map[doc_id] = (char *) malloc((doc_len+1) * sizeof(char));
             alloc_chk(map[doc_id]);
             // Save document in map
@@ -190,16 +187,13 @@ int main(int argc, char* argv[]) {
                 else if (input_num == 2) {
                     index = get_next_word_index(line, index);
                     int doc_freq = trie.get_doc_freq(&line[index]);
-                    // If there is a result, print it
-                    if (doc_freq != -1) {
-                        print_until_space(&line[index]);
-                        cout << ' ' << doc_freq << endl;
-                    }
-                    // Else no results found
-                    else {
-                        print_until_space(&line[index]);
-                        cout << ' ' << 0 << endl;
-                    }
+                    // Print result (if get_doc_freq returns -1, that means that
+                    // no result was found in the trie, so the doc frequency is 0)
+                    if (doc_freq == -1)
+                        doc_freq = 0;
+
+                    print_until_space(&line[index]);
+                    cout << ' ' << doc_freq << endl;
                 }
                 // Wrong command, explain
                 else {
