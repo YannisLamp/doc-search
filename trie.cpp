@@ -163,6 +163,7 @@ int Trie::get_doc_freq(char* word) {
         return -1;
 }
 
+
 int Trie::get_term_freq(char* word, int id) {
     PostingList* res_post_list = search_posting_list(word);
     if (res_post_list != NULL) {

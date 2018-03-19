@@ -2,11 +2,11 @@
 INCL   = trie.h trie_node.h posting_list.h posting.h utils.h query_result.h query_quicksort.h
 SRC    = main.cpp trie.cpp trie_node.cpp posting_list.cpp posting.cpp utils.cpp query_result.cpp query_quicksort.cpp
 OBJ    = $(SRC:.c=.o)
-PROG   = search
+PROG   = serts
 
 # Compiler, Linker Defines
 CC      = g++
-RM      = /bin/rm -f
+RM      = rm -f
 
 # Compile and Assemble C++ Source Files into Object Files
 %.o: %.cpp

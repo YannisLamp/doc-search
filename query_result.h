@@ -4,7 +4,7 @@
 /*
  * QueryResult class
  * Just makes it easier to store and sort
- * document ids and their relativity scores to a query
+ * document ids and their relevance scores to a query
  * It has only getter methods
  */
 

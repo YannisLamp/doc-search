@@ -1,5 +1,5 @@
 #include <iostream>
-//#include <cstdio>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
@@ -441,7 +441,6 @@ int main(int argc, char* argv[]) {
                     }
                     cout << endl;
                 }
-
                 // Else no results found
                 else
                     cout << "No results found for query" << endl;
@@ -459,7 +458,6 @@ int main(int argc, char* argv[]) {
             else {
                 explain_commands();
             }
-
         }
     }
 
