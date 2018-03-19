@@ -3,6 +3,13 @@
 
 #include "posting_list.h"
 
+/*
+ * TrieNode class
+ * As a node, it stores a letter and pointers to a possible PostingList,
+ * a down and a right TrieNode
+ * Only has setter and getter methods, as all Trie tasks are handled by the head (Trie)
+ */
+
 class TrieNode {
 private:
 	char letter;

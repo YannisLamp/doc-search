@@ -3,6 +3,14 @@
 
 #include "posting.h"
 
+/*
+ * Main PostingList class, a single-linked list
+ * Works as a head
+ * It points to a Posting object (the first one)
+ * To make inserts faster, it also points to the last Posting
+ * Handles all main tasks of the PostingList
+ */
+
 class PostingList {
 private:
     int node_num;

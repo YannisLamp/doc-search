@@ -4,6 +4,13 @@
 #include "trie_node.h"
 #include "posting_list.h"
 
+/*
+ * Main Trie class
+ * Works as a head
+ * It only points to a single TrieNode object
+ * Handles all main tasks of the Trie
+ */
+
 class Trie {
 private:
     TrieNode* first_ptr;

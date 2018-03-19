@@ -1,5 +1,5 @@
 #include <iostream>
-#include <cstdio>
+//#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
@@ -9,7 +9,7 @@
 #include "query_result.h"
 #include "query_quicksort.h"
 #include <cmath>
-//#include <sys/ioctl.h>
+#include <sys/ioctl.h>
 #include <unistd.h>
 #include <iomanip>
 
@@ -267,7 +267,8 @@ int main(int argc, char* argv[]) {
                                 int f_qi = curr_posting_ptrs[i]->get_count();
 
                                 double this_doc_score = idf * ( (f_qi*(k1 + 1)) /
-                                        (f_qi + k1*(1 - b + b*((double)map_word_num[min_id]/avgdl))) );
+                                        (f_qi + k1*(1 - b + b*((double)map_word_num[min_id]/avgdl)))
+                                                              );
 
                                 curr_score = curr_score + this_doc_score;
 
@@ -295,11 +296,10 @@ int main(int argc, char* argv[]) {
                     // as many as possible
 
                     // Get column size
-                    //struct winsize win_sz;
-                    //ioctl(STDOUT_FILENO, TIOCGWINSZ, &win_sz);
-                    //int col_num = win_sz.ws_col;
+                    struct winsize win_sz;
+                    ioctl(STDOUT_FILENO, TIOCGWINSZ, &win_sz);
+                    int col_num = win_sz.ws_col;
 
-                    int col_num = 80;
                     // Find the number of results we will print
                     int res_print_num = 0;
                     if (result_num < K)

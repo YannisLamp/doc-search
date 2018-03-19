@@ -14,6 +14,9 @@ PostingList::PostingList(int doc_id) : node_num(1) {
 PostingList::~PostingList() { delete first_node_ptr; }
 
 
+// Inserts a document id, the use of a pointer to the last Posting
+// makes it very fast, because the input documents
+// are sorted by id
 void PostingList::insert_doc_id(int doc_id) {
     if (last_node_ptr->get_id() == doc_id)
         last_node_ptr->incr_count();
@@ -25,12 +28,13 @@ void PostingList::insert_doc_id(int doc_id) {
     }
 }
 
-    
+
 int PostingList::get_node_num() {
     return node_num;
 }
 
 
+// Searches the list for the give id, then returns count
 int PostingList::search_count(int id) {
     Posting* curr_posting = first_node_ptr;
     while (curr_posting != NULL && id > curr_posting->get_id()) {

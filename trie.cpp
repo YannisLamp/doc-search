@@ -14,7 +14,8 @@ Trie::Trie() : first_ptr(NULL) { }
 
 Trie::~Trie() { delete first_ptr; }
 
-
+// Inserts a word from a document (doc_id) into the Trie
+// Uses the recursive method rec_insert()
 void Trie::insert(char* word, int doc_id) {
 	// Only manage first_ptr here, rest is done in rec_insert
 	if (first_ptr == NULL) {
@@ -46,12 +47,14 @@ void Trie::rec_insert(char* word, TrieNode* curr_node_ptr, int doc_id) {
             else
                 curr_node_ptr->get_posting_list_ptr()->insert_doc_id(doc_id);
         }
+        // Else continue searching in one level lower
         else {
+            // If it doesn't exist, create it
             if (curr_node_ptr->get_down_ptr() == NULL) {
                 curr_node_ptr->set_down_ptr(new TrieNode(word[1]));
                 rec_insert(&word[1], curr_node_ptr->get_down_ptr(), doc_id);
             }
-                // If
+            // Should be sorted
             else if (word[1] < curr_node_ptr->get_down_ptr()->get_letter()) {
                 TrieNode* temp_ptr = new TrieNode(word[1]);
                 temp_ptr->set_right_ptr(curr_node_ptr->get_down_ptr());
@@ -63,13 +66,14 @@ void Trie::rec_insert(char* word, TrieNode* curr_node_ptr, int doc_id) {
             }
         }
     }
-        // Else
+    // Else search for the correct letter in the same level
     else {
-
+        // If it doesn't exist, create it
         if (curr_node_ptr->get_right_ptr() == NULL) {
             curr_node_ptr->set_right_ptr(new TrieNode(word[0]));
             rec_insert(word, curr_node_ptr->get_right_ptr(), doc_id);
         }
+        // Should be sorted
         else if (word[0] < curr_node_ptr->get_right_ptr()->get_letter()) {
             TrieNode* temp_ptr = new TrieNode(word[0]);
             temp_ptr->set_right_ptr(curr_node_ptr->get_right_ptr());
@@ -83,14 +87,21 @@ void Trie::rec_insert(char* word, TrieNode* curr_node_ptr, int doc_id) {
 }
 
 
+// Prints all document frequencies
+// Uses the recursive method rec_print_doc_freq()
 void Trie::print_doc_freq() {
     int size = 8;
+    // Allocate memory to store current word
     char* word = (char*) malloc(size*sizeof(char));
     alloc_chk(word);
+    // Memory may be reallocated inside this method
     rec_print_doc_freq(first_ptr, &word, &size, 0);
+    // Free memory
     free(word);
 }
 
+
+// May reallocate memory for word, if needed
 void Trie::rec_print_doc_freq(TrieNode* curr_node_ptr, char** word,
                               int* size, int curr_len) {
     if ((curr_len + 2) > *size) {
@@ -116,11 +127,14 @@ void Trie::rec_print_doc_freq(TrieNode* curr_node_ptr, char** word,
 }
 
 
+// Searches for a word and returns a pointer to a PostingList
+// Uses recursive method rec_search_posting_list
+// Returns NULL if nothing is found
 PostingList* Trie::search_posting_list(char* word) {
     return rec_search_posting_list(word, first_ptr);
 }
 
-// RETURNS NULL IF NOTHING IS FOUND
+// Returns NULL if nothing is found
 PostingList* Trie::rec_search_posting_list(char* word, TrieNode* curr_node_ptr) {
     if (word[0] == curr_node_ptr->get_letter()) {
         if (isspace(word[1]) || word[1] == '\0')
@@ -139,6 +153,7 @@ PostingList* Trie::rec_search_posting_list(char* word, TrieNode* curr_node_ptr) 
             return NULL;
     }
 }
+
 
 int Trie::get_doc_freq(char* word) {
     PostingList* res_post_list = search_posting_list(word);
