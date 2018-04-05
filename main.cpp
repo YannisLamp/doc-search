@@ -257,8 +257,8 @@ int main(int argc, char* argv[]) {
                     }
 
                     // If there are still documents that contain the query words
+                    double curr_score = 0;
                     if (min_id != -1) {
-                        double curr_score = 0;
                         for (int i = 0; i < input_num-1; i++) {
                             // If this word is in the current document, calculate relativity score for that word
                             if (curr_posting_ptrs[i] != NULL && min_id == curr_posting_ptrs[i]->get_id()) {
@@ -267,8 +267,7 @@ int main(int argc, char* argv[]) {
                                 int f_qi = curr_posting_ptrs[i]->get_count();
 
                                 double this_doc_score = idf * ( (f_qi*(k1 + 1)) /
-                                        (f_qi + k1*(1 - b + b*((double)map_word_num[min_id]/avgdl)))
-                                                              );
+                                        (f_qi + k1*(1 - b + b*((double)map_word_num[min_id]/avgdl))));
 
                                 curr_score = curr_score + this_doc_score;
 
@@ -278,7 +277,7 @@ int main(int argc, char* argv[]) {
                         }
                         // Realloc for results
                         result_num++;
-                        if (results_size == result_num-1) {
+                        if (results_size == result_num) {
                             results_size = results_size * 2;
                             results = (QueryResult**)realloc(results, results_size*sizeof(QueryResult*));
                             alloc_chk(results);
@@ -320,7 +319,7 @@ int main(int argc, char* argv[]) {
                             neg_val = 1;
                     }
                     // Find maximum id digits
-                    int max_id_digits;
+                    int max_id_digits = 0;
                     if (max_id == 0)
                         max_id_digits = 1;
                     else
@@ -335,7 +334,7 @@ int main(int argc, char* argv[]) {
                             found_score = true;
                         }
                     }
-                    int max_score_digits;
+                    int max_score_digits = 0;
                     if ((int)max_score == 0)
                         max_score_digits = 1;
                     else

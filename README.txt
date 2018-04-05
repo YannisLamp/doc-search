@@ -1,13 +1,9 @@
 System Programming
 Project 1
-Lamprou Ionannis sdi1400088
+Lamprou Ioannis sdi1400088
 README
 
 This readme is written in ASCII format, as was asked
-
-Στο παραδοτέο αρχείο περιέχονται τα αρχεία: \textlatin{main.c, exp\_rand.cpp, exp\_rand.h, process.c, process.h, dl\_node.cpp, dl\_node.h, process\_queue.cpp, process\_queue.h, priority\_queue.cpp, priority\_queue.h, sem\_queue.cpp, sem\_queue.h, Makefile.} Στο \textlatin{main.c} περιέχεται ο κύριος κώδικας της προσομοιωσης, όπως ζητήθηκε στην εκφώνηση \textlatin{(main simulation loop).} Στο αρχείο \textlatin{exp\_rand.cpp} περιέχεται η συνάρτηση \textlatin{int exp\_rand(double avg)}, η οποία επιστρέφει μια τυχαία ακέραια τιμή (στρογγυλοποιημένη) σε εκθετική κατανομή, παίρνοντας ως είσοδο τον μέσο όρο της \textlatin{avg} (εκθετικά κατανεμημένη τιμή). Τα υπόλοιπα αρχεία του παραδοτέου περιέχουν όλες τις διαφορετικές δομές που χρησιμοποιούνται για την  προσομοίωση δομών και λειτουργιών του λειτουργικού συστήματος.  Τέλος υπάρχει αρχείο \textlatin{makefile} με όνομα \textlatin{Makefile}.
-\paragraph{}
-Η μονάδα μέτρησης του χρόνου είναι το 1 \textlatin{timeslot}, ενώ ο αριθμός της πιθανότητας \textlatin{input} για είσοδο μιας διεργασίας σε κρίσιμη περιοχή είναι \% (πχ 50\%)
 
 The delivered .tar.gz contains the following files: trie.h trie_node.h posting_list.h posting.h utils.h query_result.h
 query_quicksort.h, trie.cpp trie_node.cpp posting_list.cpp posting.cpp utils.cpp query_result.cpp query_quicksort.cpp

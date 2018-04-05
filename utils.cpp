@@ -16,9 +16,9 @@ void explain_args(char* prog_name) {
 // Explain wanted commands during program execution
 void explain_commands() {
     cerr << "Acceptable commands:\n/df"
-            "\n/df word (where word is "
-            "\n/tf id word"
-            "\n/search words (where words are the "
+            "\n/df 'word' "
+            "\n/tf id 'word'"
+            "\n/search words (up to 10 'word')"
             "\n/exit" << endl;
 }
 
